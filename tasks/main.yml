@@ -8,7 +8,7 @@
     - "{{ ansible_distribution | lower }}.yml"
     - "{{ ansible_os_family | lower }}.yml"
 
-- include: install_{{ ansible_os_family }}.yml
+- include: install_{{ ansible_os_family | lower }}.yml
 
 - include: configure.yml
 
