@@ -1,0 +1,65 @@
+---
+# If true, then don't add extra repo, just use standard distro repo.
+rabbitmq_use_distro_repo: false
+
+rabbitmq_user: "{{ rabbitmq_default_user }}"
+rabbitmq_group: "{{ rabbitmq_default_group }}"
+
+# Defaults to OS-specific repo var.
+rabbitmq_repo: "{{ rabbitmq_default_repo }}"
+rabbitmq_repo_key: "{{ rabbitmq_default_repo_key }}"
+rabbitmq_package: "{{ rabbitmq_default_package }}"
+rabbitmq_service: "{{ rabbitmq_default_service }}"
+rabbitmq_config_dir: "{{ rabbitmq_default_config_dir }}"
+
+rabbitmq_enable_service: yes
+
+# Define this when clustering so each node gets the same cookie.
+# rabbitmq_erlang_cookie:
+
+rabbitmq_plugins:
+  - rabbitmq_management
+rabbitmq_disable_missing_plugins: no
+
+rabbitmq_tcp_listeners:
+  - ip: 0.0.0.0
+    port: 5672
+
+rabbitmq_ssl_listeners:
+  - ip: 0.0.0.0
+    port: 5671
+
+rabbitmq_cacertfile: "{{ rabbitmq_default_cacertfile }}"
+rabbitmq_certfile: "{{ rabbitmq_default_certfile }}"
+rabbitmq_keyfile: "{{ rabbitmq_default_keyfile }}"
+rabbitmq_verify_peers: false
+rabbitmq_require_peer_cert: false
+
+rabbitmq_log_levels:
+  channel: info
+  connection: info
+  federation: info
+  mirroring: info
+
+rabbitmq_tcp_listen_options:
+  backlog: 128
+  nodelay: "true"
+  exit_on_close: "false"
+
+rabbitmq_extra_configs: {}
+# vm_memory_high_watermark: ''{absolute, "1024M"}'
+# disk_free_limit: '"2G"'
+
+rabbitmq_open_file_limit: 65536
+
+rabbitmq_cluster_nodes: []
+# - name: rabbit
+#   host: rabbit1.example.com
+rabbitmq_cluster_node_type: disc
+rabbitmq_node_name: rabbit
+rabbitmq_use_longname: false
+
+rabbitmq_install_custom_erlang: yes
+rabbitmq_erlang_repo: "{{ rabbitmq_default_erlang_repo }}"
+rabbitmq_erlang_repo_key: "{{ rabbitmq_default_erlang_repo_key }}"
+rabbitmq_erlang_package: "{{ rabbitmq_default_erlang_package }}"

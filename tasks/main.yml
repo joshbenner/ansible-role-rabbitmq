@@ -1,0 +1,20 @@
+---
+- name: Set OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+
+- include: install_{{ ansible_os_family }}.yml
+
+- include: configure.yml
+
+- name: Ensure RabbitMQ is enabled and running
+  service:
+    name: "{{ rabbitmq_service }}"
+    enabled: yes
+    state: started
+    daemon_reload: yes

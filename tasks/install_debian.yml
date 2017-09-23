@@ -1,0 +1,72 @@
+---
+- name: Make sure apt can do https
+  apt:
+    name: apt-transport-https
+    state: present
+  when: "'https' in rabbitmq_repo and not rabbitmq_use_distro_repo"
+
+- name: Install repository key
+  apt_key:
+    url: "{{ rabbitmq_repo_key }}"
+    state: present
+  when: rabbitmq_repo_key and not rabbitmq_use_distro_repo
+
+- name: Install RabbitMQ repository
+  apt_repository:
+    repo: "{{ rabbitmq_repo }}"
+    filename: rabbitmq
+    state: present
+  when: not rabbitmq_use_distro_repo
+
+- name: Install Erlang repository key
+  apt_key:
+    url: "{{ rabbitmq_erlang_repo_key }}"
+    state: present
+  when: rabbitmq_install_custom_erlang
+
+- name: Install Erlang repository
+  apt_repository:
+    repo: "{{ rabbitmq_erlang_repo }}"
+    filename: erlang
+    state: present
+  when: rabbitmq_install_custom_erlang
+
+# Separate task to be sure it's installed first, and because it's conditional.
+- name: Install Erlang package
+  apt:
+    name: "{{ rabbitmq_erlang_package }}"
+    state: present
+  when: rabbitmq_install_custom_erlang
+
+# If it's not installed, we will stop and reset the server after initial install
+# so that other configurations we are going to write subsequently (such as
+# clustering) will work.
+- name: Check if RabbitMQ is already installed
+  shell: dpkg-query -l {{ rabbitmq_package }} | grep ii
+  register: _rabbitmq_deb_check
+  failed_when: false
+  changed_when: false
+
+- name: Install RabbitMQ package
+  apt:
+    name: "{{ rabbitmq_package }}"
+    state: present
+
+- name: Check if RabbitMQ is running
+  command: systemctl status {{ rabbitmq_service }}
+  failed_when: false
+  changed_when: false
+  register: _rabbitmq_run_check
+
+- debug: var=_rabbitmq_deb_check
+- debug: var=_rabbitmq_run_check
+
+# This is initial install, so we stop it and reset it so our configs can be
+# applied during an initial start.
+- name: Stop RabbitMQ if just installed and already running
+  command: rabbitmqctl stop_app
+  when: _rabbitmq_deb_check.rc == 1 and _rabbitmq_run_check.rc == 0
+
+- name: Reset RabbitMQ if just installed and already running
+  command: rabbitmqctl reset
+  when: _rabbitmq_deb_check.rc == 1 and _rabbitmq_run_check.rc == 0

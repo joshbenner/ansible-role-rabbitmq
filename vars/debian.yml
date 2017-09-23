@@ -1,0 +1,17 @@
+---
+rabbitmq_default_user: rabbitmq
+rabbitmq_default_group: rabbitmq
+
+rabbitmq_default_repo: deb https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ {{ ansible_distribution_release }} main
+rabbitmq_default_repo_key: https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
+rabbitmq_default_package: rabbitmq-server
+rabbitmq_default_service: rabbitmq-server
+rabbitmq_default_config_dir: /etc/rabbitmq
+
+rabbitmq_default_cacertfile: /etc/ssl/certs/ssl-cert-snakeoil.pem
+rabbitmq_default_certfile: /etc/ssl/certs/ssl-cert-snakeoil.pem
+rabbitmq_default_keyfile: /etc/ssl/private/ssl-cert-snakeoil.key
+
+rabbitmq_default_erlang_repo: deb https://packages.erlang-solutions.com/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }} contrib
+rabbitmq_default_erlang_repo_key: https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+rabbitmq_default_erlang_package: esl-erlang

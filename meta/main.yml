@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Josh Benner <josh@bennerweb.com>
+  description: Install and configure RabbitMQ
+  license: BSD
+  min_ansible_version: 2.3
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+
+  galaxy_tags:
+    - rabbitmq
+    - cluster
+
+dependencies: []

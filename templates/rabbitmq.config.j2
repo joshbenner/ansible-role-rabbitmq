@@ -1,0 +1,43 @@
+%% {{ ansible_managed }}
+
+[
+  {rabbit, [
+{% if rabbitmq_tcp_listeners | length > 0 %}
+    {tcp_listeners, [
+{% for listener in rabbitmq_tcp_listeners %}
+      {"{{ listener.ip }}", {{ listener.port }}}{{ ',' if not loop.last else '' }}
+{% endfor %}
+    ]},
+{% endif %}
+{% if rabbitmq_ssl_listeners | length > 0 %}
+    {ssl_listeners, [
+{% for listener in rabbitmq_ssl_listeners %}
+      {"{{ listener.ip }}", {{ listener.port }}}{{ ',' if not loop.last else '' }}
+{% endfor %}
+    ]},
+{% endif %}
+    {ssl_options, [
+      {cacertfile, "{{ rabbitmq_cacertfile }}"},
+      {certfile, "{{ rabbitmq_certfile }}"},
+      {keyfile, "{{ rabbitmq_keyfile }}"},
+      {verify, {{ 'verify_peer' if rabbitmq_verify_peers else 'verify_none' }}},
+      {fail_if_no_peer_cert, {{ 'true' if rabbitmq_require_peer_cert else 'false' }}}
+    ]},
+    {log_levels, [
+{% for log, level in rabbitmq_log_levels.items() %}
+      { {{ log }}, {{ level }} }{{ ',' if not loop.last else '' }}
+{% endfor %}
+    ]},
+{% for opt, val in rabbitmq_extra_configs.items() %}
+    { {{ opt }}, {{ val }} }{{ ',' if not loop.last else '' }}
+{% endfor %}
+    {cluster_nodes, {
+      [
+{%- for node in rabbitmq_cluster_nodes -%}
+        "{{ node.name | default('rabbit') }}@{{ node.host }}"{{ ',' if not loop.last else '' }}
+{%- endfor -%}
+      ],
+      {{ rabbitmq_cluster_node_type }}
+    }}
+  ]}
+].

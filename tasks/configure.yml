@@ -1,0 +1,52 @@
+---
+- name: Set Erlang Cookie
+  copy:
+    dest: /var/lib/rabbitmq/.erlang.cookie
+    content: "{{ rabbitmq_erlang_cookie }}"
+    owner: "{{ rabbitmq_user }}"
+    group: "{{ rabbitmq_group }}"
+    mode: 0400
+  when: rabbitmq_erlang_cookie is defined
+  notify: restart rabbitmq
+
+- name: Write RabbitMQ configuration
+  template:
+    src: rabbitmq.config.j2
+    dest: "{{ rabbitmq_config_dir }}/rabbitmq.config"
+    owner: "{{ rabbitmq_user }}"
+    group: "{{ rabbitmq_group }}"
+    mode: 0644
+  notify: restart rabbitmq
+
+- name: Write RabbitMQ environment
+  template:
+    src: rabbitmq-env.conf.j2
+    dest: "{{ rabbitmq_config_dir }}/rabbitmq-env.conf"
+    owner: "{{ rabbitmq_user }}"
+    group: "{{ rabbitmq_group }}"
+    mode: 0644
+  notify: restart rabbitmq
+
+- name: Enable RabbitMQ plugins
+  rabbitmq_plugin:
+    names: "{{ rabbitmq_plugins | join(',') }}"
+    state: enabled
+    new_only: "{{ not rabbitmq_disable_missing_plugins }}"
+  notify: restart rabbitmq
+
+- name: Make sure systemd RabbitMQ service directory exists
+  file:
+    path: /etc/systemd/system/{{ rabbitmq_service }}.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Configure RabbitMQ service limits
+  template:
+    src: limits.conf.j2
+    dest: /etc/systemd/system/{{ rabbitmq_service }}.service.d/limits.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart rabbitmq
