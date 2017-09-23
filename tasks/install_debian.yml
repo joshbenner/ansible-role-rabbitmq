@@ -57,16 +57,3 @@
   failed_when: false
   changed_when: false
   register: _rabbitmq_run_check
-
-- debug: var=_rabbitmq_deb_check
-- debug: var=_rabbitmq_run_check
-
-# This is initial install, so we stop it and reset it so our configs can be
-# applied during an initial start.
-- name: Stop RabbitMQ if just installed and already running
-  command: rabbitmqctl stop_app
-  when: _rabbitmq_deb_check.rc == 1 and _rabbitmq_run_check.rc == 0
-
-- name: Reset RabbitMQ if just installed and already running
-  command: rabbitmqctl reset
-  when: _rabbitmq_deb_check.rc == 1 and _rabbitmq_run_check.rc == 0

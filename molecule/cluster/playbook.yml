@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  become: yes
+  roles:
+    - role: ../../..
+      rabbitmq_install_custom_erlang: false
+      rabbitmq_erlang_cookie: sekrit
+      rabbitmq_cluster_nodes:
+        - host: molecule_rabbit1
+        - host: molecule_rabbit2

@@ -1,0 +1,30 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: molecule_rabbit1
+    image: geerlingguy/docker-ubuntu1604-ansible
+    command: /lib/systemd/systemd
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+  - name: molecule_rabbit2
+    image: geerlingguy/docker-ubuntu1604-ansible
+    command: /lib/systemd/systemd
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+scenario:
+  name: cluster
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

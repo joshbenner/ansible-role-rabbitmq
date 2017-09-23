@@ -12,6 +12,16 @@
 
 - include: configure.yml
 
+# This is initial install, so we stop it and reset it so our configs can be
+# applied during an initial start.
+- name: Stop RabbitMQ if just installed and already running
+  command: rabbitmqctl stop_app
+  when: _rabbitmq_deb_check.rc == 1 and _rabbitmq_run_check.rc == 0
+
+- name: Reset RabbitMQ if just installed and already running
+  command: rabbitmqctl reset
+  when: _rabbitmq_deb_check.rc == 1 and _rabbitmq_run_check.rc == 0
+
 - name: Ensure RabbitMQ is enabled and running
   service:
     name: "{{ rabbitmq_service }}"

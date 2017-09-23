@@ -34,7 +34,7 @@
     {cluster_nodes, {
       [
 {%- for node in rabbitmq_cluster_nodes -%}
-        "{{ node.name | default('rabbit') }}@{{ node.host }}"{{ ',' if not loop.last else '' }}
+        '{{ node.name | default('rabbit') }}@{{ node.host }}'{{ ',' if not loop.last else '' }}
 {%- endfor -%}
       ],
       {{ rabbitmq_cluster_node_type }}
