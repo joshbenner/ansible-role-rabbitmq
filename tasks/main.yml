@@ -10,8 +10,10 @@
 
 - include: install_{{ ansible_os_family | lower }}.yml
 
-# Only perform cluster gymnastics when are doing the initial install.
 - include: configure.yml
+
+# Only perform cluster gymnastics when are doing the initial install.
+- include: cluster.yml
   when: _rabbitmq_deb_check.rc == 1 and rabbitmq_cluster_nodes | length > 0
 
 - name: Ensure RabbitMQ is enabled and running
