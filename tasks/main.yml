@@ -14,7 +14,7 @@
 
 # Only perform cluster gymnastics when are doing the initial install.
 - include: cluster.yml
-  when: _rabbitmq_deb_check.rc == 1 and rabbitmq_cluster_nodes | length > 0
+  when: _rabbitmq_already_installed.rc == 1 and rabbitmq_cluster_nodes | length > 0
 
 - name: Ensure RabbitMQ is enabled and running
   service:

@@ -1,4 +1,47 @@
 ---
+- name: Make sure systemd RabbitMQ service directory exists
+  file:
+    path: /etc/systemd/system/{{ rabbitmq_service }}.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Check if RabbitMQ service limits changing
+  check_mode: yes
+  template:
+    src: limits.conf.j2
+    dest: /etc/systemd/system/{{ rabbitmq_service }}.service.d/limits.conf
+  register: _rabbitmq_limits_changing
+
+- name: Check if Erlang Cookie is changing
+  check_mode: yes
+  copy:
+    dest: /var/lib/rabbitmq/.erlang.cookie
+    content: "{{ rabbitmq_erlang_cookie }}"
+  when: rabbitmq_erlang_cookie is defined
+  register: _rabbitmq_cookie_changing
+
+# epmd has to be totally stopped for cookie changes, and the entire service
+# needs to be considered down by systemd for limits changes to take effect.
+- name: Stop RabbitMQ for fundamental changes
+  service:
+    name: "{{ rabbitmq_service }}"
+    state: stopped
+  when: _rabbitmq_cookie_changing.changed or _rabbitmq_limits_changing.changed
+  tags:
+    # Ansible lint complains when service used in response to changes, saying a
+    # handler should be used instead. Well... not so much in this case.
+    - skip_ansible_lint
+
+- name: Configure RabbitMQ service limits
+  template:
+    src: limits.conf.j2
+    dest: /etc/systemd/system/{{ rabbitmq_service }}.service.d/limits.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Set Erlang Cookie
   copy:
     dest: /var/lib/rabbitmq/.erlang.cookie
@@ -7,7 +50,6 @@
     group: "{{ rabbitmq_group }}"
     mode: 0400
   when: rabbitmq_erlang_cookie is defined
-  notify: restart rabbitmq
 
 - name: Write RabbitMQ configuration
   template:
@@ -32,21 +74,4 @@
     names: "{{ rabbitmq_plugins | join(',') }}"
     state: enabled
     new_only: "{{ not rabbitmq_disable_missing_plugins }}"
-  notify: restart rabbitmq
-
-- name: Make sure systemd RabbitMQ service directory exists
-  file:
-    path: /etc/systemd/system/{{ rabbitmq_service }}.service.d
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
-- name: Configure RabbitMQ service limits
-  template:
-    src: limits.conf.j2
-    dest: /etc/systemd/system/{{ rabbitmq_service }}.service.d/limits.conf
-    owner: root
-    group: root
-    mode: 0644
   notify: restart rabbitmq
