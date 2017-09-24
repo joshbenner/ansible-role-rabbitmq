@@ -10,6 +10,8 @@
 - name: Stop RabbitMQ app
   command: rabbitmqctl stop_app
   failed_when: false
+  tags:
+    - skip_ansible_lint
 
 # Reset to be sure the cluster config gets loaded.
 # RabbitMQ doesn't let a node leave a cluster if it is the only one online, so
@@ -17,8 +19,12 @@
 - name: Reset RabbitMQ
   command: rabbitmqctl reset
   ignore_errors: yes
+  tags:
+    - skip_ansible_lint
 
 # Short wait here because RabbitMQ will often fail to cluster if nodes come
 # up at exactly the same time.
 - name: Start RabbitMQ app
   shell: sleep {{ rabbitmq_cluster_join_delay }} && rabbitmqctl start_app
+  tags:
+    - skip_ansible_lint
