@@ -23,6 +23,7 @@
     state: "{{ 'started' if rabbitmq_enable_service else 'stopped' }}"
 
 - name: RabbitMQ users
+  run_once: "{{ rabbitmq_cluster_nodes | length > 0 }}"
   rabbitmq_user:
     name: "{{ item }}"
     password: "{{ rabbitmq_users[item].password | default(omit) }}"

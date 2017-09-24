@@ -9,3 +9,5 @@
       rabbitmq_cluster_nodes:
         - host: molecule_rabbit1
         - host: molecule_rabbit2
+      rabbitmq_users:
+        joe: {}

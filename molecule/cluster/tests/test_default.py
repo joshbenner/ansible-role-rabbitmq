@@ -10,3 +10,8 @@ def test_cluster(host):
     out = host.check_output('rabbitmqctl cluster_status')
     assert 'rabbit1' in out
     assert 'rabbit2' in out
+
+
+def test_cluster_users(host):
+    out = host.check_output('rabbitmqctl list_users')
+    assert 'joe' in out
