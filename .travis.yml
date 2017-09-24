@@ -12,4 +12,4 @@ script:
   - molecule test --all
 
 notifications:
-    webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
