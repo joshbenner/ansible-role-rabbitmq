@@ -68,7 +68,7 @@ rabbitmq_cluster_nodes: []
 rabbitmq_cluster_node_type: disc
 rabbitmq_node_name: rabbit
 rabbitmq_use_longname: false
-rabbitmq_cluster_join_delay: "{{ (rabbitmq_cluster_nodes | map(attribute='host') | list).index(inventory_hostname) * 5 }}"
+rabbitmq_cluster_join_delay: "{{ (rabbitmq_cluster_nodes | map(attribute='host') | list).index(ansible_hostname) * 5 }}"
 
 rabbitmq_install_custom_erlang: yes
 rabbitmq_erlang_repo: "{{ rabbitmq_default_erlang_repo }}"
