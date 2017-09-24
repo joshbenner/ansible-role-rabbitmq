@@ -37,3 +37,9 @@ def test_env_file(host):
     assert f.group == 'rabbitmq'
     assert f.mode == 0o644
     assert f.contains('RABBITMQ_NODENAME="rabbit"')
+
+
+def test_users(host):
+    out = host.check_output('rabbitmqctl list_users')
+    assert 'joe' in out
+    assert 'guest' not in out

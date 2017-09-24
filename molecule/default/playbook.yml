@@ -4,3 +4,13 @@
   become: yes
   roles:
     - role: ../../..
+      rabbitmq_users:
+        joe:
+          password: changeme
+          vhost: /
+          configure_priv: .*
+          read_priv: .*
+          write_priv: .*
+          state: present
+        guest:
+          state: absent

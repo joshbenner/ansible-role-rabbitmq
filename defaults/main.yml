@@ -14,6 +14,16 @@ rabbitmq_config_dir: "{{ rabbitmq_default_config_dir }}"
 
 rabbitmq_enable_service: yes
 
+# Thin wrapper around rabbitmq_user module.
+rabbitmq_users: {}
+# joe:
+#   password: changeme
+#   vhost: /
+#   configure_priv: .*
+#   read_priv: .*
+#   write_priv: .*
+#   state: present
+
 # Define this when clustering so each node gets the same cookie.
 # rabbitmq_erlang_cookie:
 

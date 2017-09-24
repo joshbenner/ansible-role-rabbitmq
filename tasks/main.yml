@@ -21,3 +21,18 @@
     name: "{{ rabbitmq_service }}"
     enabled: "{{ rabbitmq_enable_service }}"
     state: "{{ 'started' if rabbitmq_enable_service else 'stopped' }}"
+
+- name: RabbitMQ users
+  rabbitmq_user:
+    name: "{{ item }}"
+    password: "{{ rabbitmq_users[item].password | default(omit) }}"
+    vhost: "{{ rabbitmq_users[item].vhost | default(omit) }}"
+    configure_priv: "{{ rabbitmq_users[item].configure_priv | default(omit) }}"
+    read_priv: "{{ rabbitmq_users[item].read_priv | default(omit) }}"
+    write_priv: "{{ rabbitmq_users[item].write_priv | default(omit) }}"
+    permissions: "{{ rabbitmq_users[item].permissions | default(omit) }}"
+    state: "{{ rabbitmq_users[item].state | default(omit) }}"
+    tags: "{{ rabbitmq_users[item].tags | default(omit) }}"
+    force: "{{ rabbitmq_users[item].force | default(omit) }}"
+    node: "{{ rabbitmq_users[item].node | default(omit) }}"
+  with_items: "{{ rabbitmq_users }}"
