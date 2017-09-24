@@ -17,7 +17,7 @@
 # RabbitMQ doesn't let a node leave a cluster if it is the only one online, so
 # we tolerate failure here.
 - name: Reset RabbitMQ
-  command: rabbitmqctl reset
+  command: rabbitmqctl force_reset
   ignore_errors: yes
   tags:
     - skip_ansible_lint
