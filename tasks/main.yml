@@ -19,5 +19,5 @@
 - name: Ensure RabbitMQ is enabled and running
   service:
     name: "{{ rabbitmq_service }}"
-    enabled: yes
-    state: started
+    enabled: "{{ rabbitmq_enable_service }}"
+    state: "{{ 'started' if rabbitmq_enable_service else 'stopped' }}"
