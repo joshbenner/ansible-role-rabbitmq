@@ -42,6 +42,13 @@
     group: root
     mode: 0644
 
+- name: Reload systemd units after change
+  systemd:
+    daemon_reload: yes
+  when: _rabbitmq_limits_changing.changed
+  tags:
+    - skip_ansible_lint
+
 - name: Set Erlang Cookie
   copy:
     dest: /var/lib/rabbitmq/.erlang.cookie
@@ -75,3 +82,13 @@
     state: enabled
     new_only: "{{ not rabbitmq_disable_missing_plugins }}"
   notify: restart rabbitmq
+
+# This is required because rabbitmq_plugins can create a cookie with wrong
+# permissions under certain circumstances, and running rabbitmq_plugin as the
+# rabbitmq user does not seem work?
+- name: Ensure erlang cookie perms
+  file:
+    path: /var/lib/rabbitmq/.erlang.cookie
+    owner: "{{ rabbitmq_user }}"
+    group: "{{ rabbitmq_group }}"
+    mode: 0400
