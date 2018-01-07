@@ -4,7 +4,7 @@
   become: yes
   roles:
     - role: ../../..
-      rabbitmq_install_custom_erlang: false
+      rabbitmq_install_custom_erlang: true
       rabbitmq_erlang_cookie: sekrit
       rabbitmq_cluster_nodes:
         - host: molecule_rabbit1
